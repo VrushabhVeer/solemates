@@ -60,7 +60,7 @@ export default function Navbar() {
             <Link to="/">
               <span>Collections</span>
             </Link>
-            <Link to="/">
+            <Link to="/products">
               <span>Products</span>
             </Link>
             <Link to="/">
@@ -95,7 +95,7 @@ export default function Navbar() {
               <Link to="/">
                 <span>Collections</span>
               </Link>
-              <Link to="/">
+              <Link to="/products">
                 <span>Products</span>
               </Link>
               <Link to="/">

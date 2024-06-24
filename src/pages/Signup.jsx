@@ -1,92 +1,129 @@
 import React, { useState } from "react";
-import google from "../assets/icons/google.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import GoogleAuth from "../components/common/GoogleAuth";
+import view from "../assets/icons/view.png";
+import hide from "../assets/icons/hide.png";
+import axios from "axios";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const payload = {
+    name,
+    email,
+    password,
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/users/signup",
+        payload
+      );
+
+      enqueueSnackbar(response.data.message, { variant: "success" });
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (error) {
+      if (error.response && error.response.data) {
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
+      } else {
+        enqueueSnackbar("An unexpected error occurred", { variant: "error" });
+      }
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
-    <div className="h-[90vh] flex justify-center items-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg w-96">
-        <div>
-          <h2 className="text-2xl font-semibold">Sign Up</h2>
-          <p className="mt-1 text-slate-600 text-sm">Create your account</p>
-        </div>
-        <div className="mt-8">
-          <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            placeholder="Enter full name"
-            value={formData.fullName}
-            onChange={handleChange}
-            className="w-full border py-2 px-4 rounded-md outline-none"
-          />
-        </div>
-        <div className="mt-4">
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Enter email address"
-            autoComplete="username"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border py-2 px-4 rounded-md outline-none"
-          />
-        </div>
-        <div className="mt-4">
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter password"
-            autoComplete="current-password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full border py-2 px-4 rounded-md outline-none"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full mt-5 bg-black text-white py-2 rounded-md hover:bg-black focus:outline-none"
-        >
-          Sign Up
-        </button>
+    <>
+      <SnackbarProvider />
+      <div className="h-[90vh] flex justify-center items-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg w-96">
+          <div>
+            <h2 className="text-2xl font-semibold">Sign Up</h2>
+            <p className="mt-1 text-slate-600 text-sm">Create your account</p>
+          </div>
 
-        <p className="mt-3 text-slate-600 text-sm">
-          Already have an account? <Link to="/login"><u>Login.</u></Link>
-        </p>
+          <div className="mt-8">
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Enter full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border py-2 px-4 rounded-md outline-none"
+            />
+          </div>
+          <div className="mt-4">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter email address"
+              autoComplete="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border py-2 px-4 rounded-md outline-none"
+            />
+          </div>
 
-        <p className="mt-8 text-center">Or signup with</p>
+          <div className="mt-4 relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              placeholder="Enter password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border py-2 px-4 rounded-md outline-none pr-10"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 px-3 py-2 focus:outline-none"
+            >
+              {showPassword ? (
+                <img className="w-5" src={view} alt="view" loading="lazy" />
+              ) : (
+                <img className="w-5" src={hide} alt="hide" loading="lazy" />
+              )}
+            </button>
+          </div>
 
-        <div className="mt-5">
           <button
             type="submit"
-            className="flex gap-2 items-center justify-center w-full border py-2 rounded-md focus:outline-none"
+            onClick={handleSubmit}
+            className="w-full mt-5 bg-black text-white py-2 rounded-md hover:bg-black focus:outline-none"
           >
-            Google <img className="w-5" src={google} alt="google" loading="lazy" />
+            Sign Up
           </button>
+
+          <p className="mt-3 text-slate-600 text-sm">
+            Already have an account?{" "}
+            <Link to="/login">
+              <u>Login.</u>
+            </Link>
+          </p>
+
+          <p className="mt-8 text-center">Or signup with</p>
+
+          <div className="mt-5">
+            <GoogleAuth />
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </>
   );
 };
 

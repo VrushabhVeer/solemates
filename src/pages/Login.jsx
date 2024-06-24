@@ -1,31 +1,46 @@
 import React, { useState } from "react";
-import google from "../assets/icons/google.png";
-import { Link } from "react-router-dom";
+import view from "../assets/icons/view.png";
+import hide from "../assets/icons/hide.png";
+import { Link, useNavigate } from "react-router-dom";
+import GoogleAuth from "../components/common/GoogleAuth";
+import axios from "axios";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const payload = {
+    email,
+    password,
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/api/users/login", payload);
+      enqueueSnackbar(response.data.message, { variant: 'success' });
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      if (error.response && error.response.data) {
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
+      } else {
+        enqueueSnackbar("An unexpected error occurred", { variant: "error" });
+      }
+    }
+  };
 
-    console.log(formData);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
     <div className="h-[90vh] flex justify-center items-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg w-96">
+      <SnackbarProvider />
+      <div className="bg-white p-8 rounded-lg w-96">
         <div>
           <h2 className="text-2xl font-semibold">Login</h2>
           <p className="mt-1 text-slate-600 text-sm">Login to your account</p>
@@ -36,45 +51,55 @@ const Login = () => {
             id="email"
             name="email"
             placeholder="Enter email address"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full border py-2 px-4 rounded-md"
           />
         </div>
-        <div className="mt-4">
+        <div className="mt-4 relative">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
             name="password"
             placeholder="Enter password"
             autoComplete="current-password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full border py-2 px-4 rounded-md"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border py-2 px-4 rounded-md outline-none pr-10"
           />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 right-0 px-3 py-2 focus:outline-none"
+          >
+            {showPassword ? (
+              <img className="w-5" src={view} alt="view" loading="lazy" />
+            ) : (
+              <img className="w-5" src={hide} alt="hide" loading="lazy" />
+            )}
+          </button>
         </div>
         <button
           type="submit"
+          onClick={handleSubmit}
           className="w-full mt-5 bg-black text-white py-2 rounded-md hover:bg-black focus:outline-none"
         >
           Login
         </button>
 
         <p className="mt-3 text-slate-600 text-sm">
-          Don't have an account? <Link to="/signup"><u>Signup.</u></Link>
+          Don't have an account?{" "}
+          <Link to="/signup">
+            <u>Signup.</u>
+          </Link>
         </p>
 
         <p className="mt-8 text-center">Or login with</p>
 
         <div className="mt-5">
-          <button
-            type="submit"
-            className="flex gap-2 items-center justify-center w-full border py-2 rounded-md focus:outline-none"
-          >
-            Google <img className="w-5" src={google} alt="google" loading="lazy" />
-          </button>
+          <GoogleAuth />
         </div>
-      </form>
+      </div>
     </div>
   );
 };
