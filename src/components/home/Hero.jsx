@@ -1,5 +1,6 @@
 import React from "react";
 import heroImage from "../../assets/images/hero-image.jpg";
+import Image from "../common/Image";
 
 const Hero = () => {
   return (
@@ -22,7 +23,7 @@ const Hero = () => {
         
       </div>
       <div className="w-full">
-        <img src={heroImage} alt="hero_image" loading="eager" />
+        <Image src={heroImage} alt="hero_image" loading="eager" />
       </div>
     </div>
   );

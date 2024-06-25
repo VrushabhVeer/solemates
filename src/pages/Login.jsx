@@ -3,8 +3,8 @@ import view from "../assets/icons/view.png";
 import hide from "../assets/icons/hide.png";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleAuth from "../components/common/GoogleAuth";
-import axios from "axios";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { loginApi } from "../utils/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const Login = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/api/users/login", payload);
+      const response = await loginApi(payload);
       enqueueSnackbar(response.data.message, { variant: 'success' });
       setTimeout(() => {
         navigate("/");

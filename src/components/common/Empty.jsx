@@ -1,12 +1,13 @@
 import React from "react";
 import emptyCart from "../../assets/images/empty-cart.png";
+import Image from "./Image";
 
 const Empty = () => {
   return (
     <div>
       <h1 className="font-semibold text-2xl">Cart</h1>
       <div className="w-8/12 md:w-4/12 mx-auto">
-        <img
+        <Image
           className="w-full"
           src={emptyCart}
           alt="empty-cart"

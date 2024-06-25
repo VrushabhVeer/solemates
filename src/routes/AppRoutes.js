@@ -11,12 +11,14 @@ import SizeGuide from "../pages/SizeGuide";
 import OrderPlaced from "../pages/OrderPlaced";
 import NotFound from "../pages/NotFound";
 import AllProducts from "../pages/AllProducts";
+import ProductDetails from "../pages/ProductDetails";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="/products" element={<AllProducts />} />
+      <Route path="/:product_id" element={<ProductDetails />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/cart" element={<Cart />} />

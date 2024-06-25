@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import avatar from "../../assets/icons/avatar.png";
+import Image from "../common/Image";
 
 const InfiniteScroll = () => {
   const testimonials = [
@@ -97,7 +98,7 @@ const InfiniteScroll = () => {
             <h2 className="text-yellow-500">{item.rating}</h2>
             <p className="text-slate-600 text-sm">{item.description}</p>
             <div className="flex items-center gap-2 mt-2">
-              <img
+              <Image
                 className="w-8 h-8 object-cover rounded-full"
                 src={item.avatar === "" ? avatar : item.avatar}
                 alt={item.userName}

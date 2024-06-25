@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import GoogleAuth from "../components/common/GoogleAuth";
 import view from "../assets/icons/view.png";
 import hide from "../assets/icons/hide.png";
-import axios from "axios";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { signupApi } from "../utils/api";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -21,10 +21,7 @@ const Signup = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/users/signup",
-        payload
-      );
+      const response = await signupApi(payload);
 
       enqueueSnackbar(response.data.message, { variant: "success" });
       setTimeout(() => {
