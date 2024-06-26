@@ -72,20 +72,28 @@ export default function Navbar() {
           </div>
 
           <div className="flex space-x-5">
-            <span className="hidden md:flex">
-              <img
-                className="w-5"
-                src={wishlist}
-                alt="wishlist"
-                loading="lazy"
-              />
-            </span>
-            <span className="hidden md:flex">
-              <img className="w-5" src={cart} alt="cart" loading="lazy" />
-            </span>
-            <span className="md:flex">
-              <img className="w-5" src={user} alt="user" loading="lazy" />
-            </span>
+            <Link to="/wishlist">
+              <span className="hidden md:flex">
+                <img
+                  className="w-5"
+                  src={wishlist}
+                  alt="wishlist"
+                  loading="lazy"
+                />
+              </span>
+            </Link>
+
+            <Link to="/cart">
+              <span className="hidden md:flex">
+                <img className="w-5" src={cart} alt="cart" loading="lazy" />
+              </span>
+            </Link>
+
+            <Link to="/">
+              <span className="md:flex">
+                <img className="w-5" src={user} alt="user" loading="lazy" />
+              </span>
+            </Link>
           </div>
         </div>
 
@@ -104,7 +112,7 @@ export default function Navbar() {
               <Link to="/">
                 <span>Sale</span>
               </Link>
-              <Link to="/">
+              <Link to="/login">
                 <span>Login</span>
               </Link>
             </div>
