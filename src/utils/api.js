@@ -13,6 +13,7 @@ export const getProductById = (productId) =>
 export const addToCart = (data, config) =>
   api.post("/cart/create", data, config);
 export const getCartItems = (userId) => api.get(`/cart/${userId}`);
+export const deleteCartItem = (itemId) => api.delete(`/cart/delete/${itemId}`);
 export const addToWishlist = (data) => api.post("/wishlist/create", data);
 export const getWishlistItems = (userId) => api.get(`/wishlist/${userId}`);
 export const addAddress = (data) => api.post("/address/create", data);

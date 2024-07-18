@@ -3,6 +3,7 @@ import heart from "../assets/icons/heart.png"
 import { getWishlistItems } from "../utils/api";
 import Empty from "../components/common/Empty";
 import { Link } from "react-router-dom";
+import Image from "../components/common/Image";
 
 const Wishlist = () => {
   const [data, setData] = useState([]);
@@ -34,7 +35,7 @@ const Wishlist = () => {
             <div key={item.id}>
               <Link to={`/${item._id}`} key={item._id}>
                 <div className="relative">
-                  <img
+                  <Image
                     className="w-full h-[50vh] object-cover rounded-t-md"
                     src={item.img1}
                     alt="productImage"
@@ -42,7 +43,7 @@ const Wishlist = () => {
                   />
 
                   <div className="absolute top-5 left-5 bg-white p-2 rounded-full">
-                    <img className="w-5" src={heart} alt="heart" loading="lazy" />
+                    <Image className="w-5" src={heart} alt="heart" loading="lazy" />
                   </div>
                 </div>
                 <div className="mt-3">

@@ -1,11 +1,12 @@
 import React from "react";
 import shoe from "../assets/images/error-image.jpg";
 import { Link } from "react-router-dom";
+import Image from "../components/common/Image";
 
 const NotFound = () => {
   return (
     <div className="w-full relative">
-      <img
+      <Image
         className="w-full h-[100vh] md:h-[90vh] object-cover"
         src={shoe}
         alt="nike-shoe"

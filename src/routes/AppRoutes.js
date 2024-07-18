@@ -12,11 +12,13 @@ import OrderPlaced from "../pages/OrderPlaced";
 import NotFound from "../pages/NotFound";
 import AllProducts from "../pages/AllProducts";
 import ProductDetails from "../pages/ProductDetails";
+import Profile from "../pages/Profile";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/products" element={<AllProducts />} />
       <Route path="/:product_id" element={<ProductDetails />} />
       <Route path="/signup" element={<Signup />} />

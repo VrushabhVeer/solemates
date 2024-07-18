@@ -4,6 +4,7 @@ import { useState } from "react";
 import wishlist from "../../assets/icons/wishlist.png";
 import cart from "../../assets/icons/bag.png";
 import user from "../../assets/icons/user.png";
+import Image from "./Image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,7 +75,7 @@ export default function Navbar() {
           <div className="flex space-x-5">
             <Link to="/wishlist">
               <span className="hidden md:flex">
-                <img
+                <Image
                   className="w-5"
                   src={wishlist}
                   alt="wishlist"
@@ -85,13 +86,13 @@ export default function Navbar() {
 
             <Link to="/cart">
               <span className="hidden md:flex">
-                <img className="w-5" src={cart} alt="cart" loading="lazy" />
+                <Image className="w-5" src={cart} alt="cart" loading="lazy" />
               </span>
             </Link>
 
-            <Link to="/">
+            <Link to="/profile">
               <span className="md:flex">
-                <img className="w-5" src={user} alt="user" loading="lazy" />
+                <Image className="w-5" src={user} alt="user" loading="lazy" />
               </span>
             </Link>
           </div>

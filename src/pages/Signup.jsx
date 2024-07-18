@@ -5,6 +5,7 @@ import view from "../assets/icons/view.png";
 import hide from "../assets/icons/hide.png";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { signupApi } from "../utils/api";
+import Image from "../components/common/Image";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -91,9 +92,9 @@ const Signup = () => {
               className="absolute inset-y-0 right-0 px-3 py-2 focus:outline-none"
             >
               {showPassword ? (
-                <img className="w-5" src={view} alt="view" loading="lazy" />
+                <Image className="w-5" src={view} alt="view" loading="lazy" />
               ) : (
-                <img className="w-5" src={hide} alt="hide" loading="lazy" />
+                <Image className="w-5" src={hide} alt="hide" loading="lazy" />
               )}
             </button>
           </div>

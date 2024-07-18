@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { addAddress, getCartItems } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import Image from "../components/common/Image";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Checkout = () => {
 
     if (!formData.firstName || !formData.lastName || !formData.address || !formData.street || !formData.state || !formData.zip || !formData.mobile) {
       enqueueSnackbar("Please fill in all required fields", { variant: "error" });
-      return; // Stop the function execution if any field is empty
+      return;
     }
 
     try {
@@ -214,7 +215,7 @@ const Checkout = () => {
               {data.map((item) => (
                 <div className="flex items-center gap-5 border-b border-gray-300 mt-4" key={item._id}>
                   <div className="w-2/12">
-                    <img
+                    <Image
                       className="w-full h-20 object-cover rounded-sm"
                       src={item.img1}
                       alt="product_img"

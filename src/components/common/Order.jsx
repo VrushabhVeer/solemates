@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { getCartItems } from "../../utils/api";
+import { deleteCartItem, getCartItems } from "../../utils/api";
 import { Link } from "react-router-dom";
 import remove from "../../assets/icons/remove.png";
+import Image from "./Image";
+import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import Modal from "./Modal";
 
 const Order = ({ onCartDataFetched, type }) => {
   const [data, setData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [itemIdToDelete, setItemIdToDelete] = useState(null);
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -21,6 +26,29 @@ const Order = ({ onCartDataFetched, type }) => {
     fetchData();
   }, [userId, onCartDataFetched]);
 
+  const handleDelete = async () => {
+    try {
+      const response = await deleteCartItem(itemIdToDelete);
+      enqueueSnackbar(response.data.message, { variant: "success" });
+      setData((prevData) => prevData.filter((item) => item._id !== itemIdToDelete));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowModal(false);
+      setItemIdToDelete(null);
+    }
+  };
+
+  const openModal = (id) => {
+    setShowModal(true);
+    setItemIdToDelete(id);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setItemIdToDelete(null);
+  };
+
   return (
     <div>
       {data.map((item) => (
@@ -30,7 +58,7 @@ const Order = ({ onCartDataFetched, type }) => {
         >
           <div className="w-4/12">
             <Link to={`/${item._id}`} key={item._id}>
-              <img
+              <Image
                 className="w-full h-40 object-cover rounded-sm"
                 src={item.img1}
                 alt="product_img"
@@ -45,8 +73,9 @@ const Order = ({ onCartDataFetched, type }) => {
               {type === "payment" ? (
                 ""
               ) : (
-                <img
-                  className="w-5"
+                <Image
+                  onClick={() => openModal(item._id)}
+                  className="w-5 cursor-pointer"
                   src={remove}
                   alt="remove_icon"
                   loading="lazy"
@@ -73,6 +102,14 @@ const Order = ({ onCartDataFetched, type }) => {
           </div>
         </div>
       ))}
+
+
+      {showModal && (
+        <Modal closeModal={closeModal}
+        handleDelete={handleDelete} />
+      )}
+
+      <SnackbarProvider />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import GoogleAuth from "../components/common/GoogleAuth";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { loginApi } from "../utils/api";
+import Image from "../components/common/Image";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,9 +21,11 @@ const Login = () => {
   const handleSubmit = async () => {
     try {
       const response = await loginApi(payload);
-      const { token, userId, userName } = response.data;
+      const { token, userId, userName, createdAt, userEmail } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
+      localStorage.setItem("createdAt", createdAt);
+      localStorage.setItem("userEmail", userEmail);
       localStorage.setItem("userName", userName);
 
       enqueueSnackbar(response.data.message, { variant: "success" });
@@ -78,9 +81,9 @@ const Login = () => {
             className="absolute inset-y-0 right-0 px-3 py-2 focus:outline-none"
           >
             {showPassword ? (
-              <img className="w-5" src={view} alt="view" loading="lazy" />
+              <Image className="w-5" src={view} alt="view" loading="lazy" />
             ) : (
-              <img className="w-5" src={hide} alt="hide" loading="lazy" />
+              <Image className="w-5" src={hide} alt="hide" loading="lazy" />
             )}
           </button>
         </div>

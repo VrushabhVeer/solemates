@@ -1,5 +1,6 @@
 import React from "react";
 import google from "../../assets/icons/google.png";
+import Image from "./Image";
 
 const GoogleAuth = () => {
   const handleGoogleAuth = () => {
@@ -14,7 +15,7 @@ const GoogleAuth = () => {
         onClick={handleGoogleAuth}
         className="flex gap-2 items-center justify-center w-full border py-2 rounded-md focus:outline-none"
       >
-        Google <img className="w-5" src={google} alt="google" loading="lazy" />
+        Google <Image className="w-5" src={google} alt="google" loading="lazy" />
       </button>
     </div>
   );

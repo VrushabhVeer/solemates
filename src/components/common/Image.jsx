@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const Image = ({ src, alt, className }) => {
+const Image = ({ src, alt, className, onClick }) => {
   const imgRef = useRef();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -36,6 +36,7 @@ const Image = ({ src, alt, className }) => {
       src={isVisible ? src : ""}
       alt={alt}
       className={className}
+      onClick={onClick}
     />
   );
 };
