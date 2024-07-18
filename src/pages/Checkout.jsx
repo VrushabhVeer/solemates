@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { addAddress, getCartItems } from "../utils/api";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
 const Checkout = () => {
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -9,26 +14,24 @@ const Checkout = () => {
     street: "",
     zip: "",
     mobile: "",
-    landmark: "",
+    city: "",
+    state: "",
+    userId,
   });
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/cart");
-      setData(response.data);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
+    const fetchData = async () => {
+      try {
+        const response = await getCartItems(userId);
+        setData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     }
-  };
+    fetchData();
+  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,159 +41,198 @@ const Checkout = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    if (!formData.firstName || !formData.lastName || !formData.address || !formData.street || !formData.state || !formData.zip || !formData.mobile) {
+      enqueueSnackbar("Please fill in all required fields", { variant: "error" });
+      return; // Stop the function execution if any field is empty
+    }
+
+    try {
+      const response = await addAddress(formData);
+      enqueueSnackbar(response.data.message, { variant: "success" });
+      setTimeout(() => {
+        navigate("/payment");
+      }, 1500);
+    } catch (error) {
+      enqueueSnackbar("Error adding address", { variant: "error" });
+      console.error("Error adding address:", error);
+    }
   };
 
   return (
-    <div className="w-[90%] md:w-[85%] mx-auto mt-10 mb-10">
-      <h1 className="font-semibold text-2xl">Checkout</h1>
-      <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
-        <div className="w-full">
-          <h2 className="font-semibold text-1xl">Shipping Details</h2>
+    <>
+      <SnackbarProvider />
 
-          <form onSubmit={handleSubmit} className="mt-3">
-            <div className="flex flex-col md:flex-row lg:flex-row items-center gap-4">
-              <div className="w-full">
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-4 rounded-md outline-none"
-                />
-              </div>
-              <div className="w-full">
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-4 rounded-md outline-none"
-                />
-              </div>
-            </div>
+      <div className="w-[90%] md:w-[85%] mx-auto mt-10 mb-10">
+        <h1 className="font-semibold text-2xl">Checkout</h1>
+        <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
+          <div className="w-full">
+            <h2 className="font-semibold text-1xl">Shipping Details</h2>
 
-            <div className="mt-4">
-              <input
-                type="text"
-                id="address"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full border py-2 px-4 rounded-md outline-none"
-              />
-            </div>
-
-            <div className="mt-4">
-              <input
-                type="text"
-                id="street"
-                name="street"
-                placeholder="Street"
-                value={formData.street}
-                onChange={handleChange}
-                className="w-full border py-2 px-4 rounded-md outline-none"
-              />
-            </div>
-            <div className="mt-4">
-              <input
-                type="text"
-                id="landmark"
-                name="landmark"
-                placeholder="Landmark ( Optional )"
-                value={formData.landmark}
-                onChange={handleChange}
-                className="w-full border py-2 px-4 rounded-md outline-none"
-              />
-            </div>
-
-            <div className="flex flex-col md:flex-row lg:flex-row items-center gap-4 mt-4">
-              <div className="w-full">
-                <input
-                  type="number"
-                  id="zip"
-                  name="zip"
-                  placeholder="Zip Code"
-                  value={formData.zip}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-4 rounded-md outline-none"
-                />
-              </div>
-              <div className="w-full">
-                <input
-                  type="number"
-                  id="mobile"
-                  name="mobile"
-                  placeholder="Mobile Number"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-4 rounded-md outline-none"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="mt-8 bg-black px-12 text-white py-2 rounded-md hover:bg-black focus:outline-none"
-            >
-              Proceed to payment
-            </button>
-          </form>
-        </div>
-
-        <div className="w-full">
-          <h2 className="font-semibold text-1xl">Order Summary</h2>
-
-          <div className="mt-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p>Subtotal</p>
-                <p className="mt-3">Tax</p>
-                <p className="mt-3">Shipping</p>
-              </div>
-              <div>
-                <p>₹ 3999</p>
-                <p className="mt-3">₹ 10</p>
-                <p className="mt-3">₹ 89</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-4 border-t border-gray-300">
-              <p className="mt-2 font-medium">Total</p>
-              <p className="mt-2 font-medium">₹ 4100</p>
-            </div>
-          </div>
-
-          <div className="mt-10">
-            <h2 className="font-semibold text-1xl">Order Details</h2>
-            {data.map((item) => (
-              <div className="flex items-center gap-5 border-b border-gray-300 pb-4 mt-5">
-                <div className="w-2/12">
-                  <img
-                    className="w-full h-20 object-cover rounded-sm"
-                    src={item.img1}
-                    alt="product_img"
-                    loading="lazy"
+            <form onSubmit={handleSubmit} className="mt-3">
+              <div className="flex flex-col md:flex-row lg:flex-row items-center gap-4">
+                <div className="w-full">
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="w-full border py-2 px-4 rounded-md outline-none"
+                    required
                   />
                 </div>
-                <div className="w-8/12">
-                  <h2 className="font-semibold">{item.title}</h2>
-                  <h2 className="font-semibold">₹ {item.originalPrice}</h2>
-                  <p className="text-gray-500 italic">{item.title2}</p>
+                <div className="w-full">
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full border py-2 px-4 rounded-md outline-none"
+                    required
+                  />
                 </div>
               </div>
-            ))}
+
+              <div className="mt-4">
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder="Address Line"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="w-full border py-2 px-4 rounded-md outline-none"
+                  required
+                />
+              </div>
+
+              <div className="mt-4">
+                <input
+                  type="text"
+                  id="street"
+                  name="street"
+                  placeholder="Street"
+                  value={formData.street}
+                  onChange={handleChange}
+                  className="w-full border py-2 px-4 rounded-md outline-none"
+                  required
+                />
+              </div>
+              <div className="mt-4">
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  placeholder="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="w-full border py-2 px-4 rounded-md outline-none"
+                  required
+                />
+              </div>
+
+              <div className="mt-4">
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  placeholder="State"
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="w-full border py-2 px-4 rounded-md outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col md:flex-row lg:flex-row items-center gap-4 mt-4">
+                <div className="w-full">
+                  <input
+                    type="number"
+                    id="zip"
+                    name="zip"
+                    placeholder="Zip Code"
+                    value={formData.zip}
+                    onChange={handleChange}
+                    className="w-full border py-2 px-4 rounded-md outline-none"
+                    required
+                  />
+                </div>
+                <div className="w-full">
+                  <input
+                    type="number"
+                    id="mobile"
+                    name="mobile"
+                    placeholder="Mobile Number"
+                    value={formData.mobile}
+                    onChange={handleChange}
+                    className="w-full border py-2 px-4 rounded-md outline-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="mt-8 bg-black px-12 text-white py-2 rounded-md hover:bg-black focus:outline-none"
+              >
+                Proceed to payment
+              </button>
+            </form>
+          </div>
+
+          <div className="w-full">
+            <h2 className="font-semibold text-1xl">Order Summary</h2>
+
+            <div className="mt-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p>Subtotal</p>
+                  <p className="mt-3">Tax</p>
+                  <p className="mt-3">Shipping</p>
+                </div>
+                <div>
+                  <p>₹ 3999</p>
+                  <p className="mt-3">₹ 10</p>
+                  <p className="mt-3">₹ 89</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mt-4 border-t border-gray-300">
+                <p className="mt-2 font-medium">Total</p>
+                <p className="mt-2 font-medium">₹ 4100</p>
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <h2 className="font-semibold text-1xl">Order Details</h2>
+              {data.map((item) => (
+                <div className="flex items-center gap-5 border-b border-gray-300 mt-4" key={item._id}>
+                  <div className="w-2/12">
+                    <img
+                      className="w-full h-20 object-cover rounded-sm"
+                      src={item.img1}
+                      alt="product_img"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="w-8/12">
+                    <h2 className="font-semibold text-sm">{item.title}</h2>
+                    <h2 className="font-semibold text-sm">₹ {item.originalPrice}</h2>
+                    <p className="text-gray-500 italic text-sm mt-1">{item.title2}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

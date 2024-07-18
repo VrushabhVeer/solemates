@@ -10,5 +10,10 @@ export const loginApi = (payload) => api.post("/users/login", payload);
 export const getAllProducts = () => api.get("/products/shoes");
 export const getProductById = (productId) =>
   api.get(`/products/shoe/${productId}`);
-export const addToCart = (data) => api.post("/cart", data);
-export const addToWishlist = (data) => api.post("/wishlist", data);
+export const addToCart = (data, config) =>
+  api.post("/cart/create", data, config);
+export const getCartItems = (userId) => api.get(`/cart/${userId}`);
+export const addToWishlist = (data) => api.post("/wishlist/create", data);
+export const getWishlistItems = (userId) => api.get(`/wishlist/${userId}`);
+export const addAddress = (data) => api.post("/address/create", data);
+export const getAddress = (userId) => api.get(`/address/${userId}`);

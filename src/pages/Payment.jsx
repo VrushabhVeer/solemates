@@ -1,11 +1,28 @@
-import React from "react";
-import shoe from "../assets/images/trending4.jpg";
-import shoe1 from "../assets/images/trending6.jpg";
-import remove from "../assets/icons/remove.png";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/icons/google-pay.png";
 import axios from "axios";
+import Order from "../components/common/Order";
+import { getAddress } from "../utils/api";
 
 const Payment = () => {
+  const [address, setAddress] = useState([]);
+  const userName = localStorage.getItem("userName");
+  const userId = localStorage.getItem("userId");
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const response = await getAddress(userId);
+        setAddress(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAddress();
+  }, [userId]);
+
   const handleCheckout = async (amount) => {
     let data1 = await axios.get("http://localhost:8000/api/getKey");
     let data2 = await axios.post("http://localhost:8000/api/checkout", {
@@ -22,7 +39,7 @@ const Payment = () => {
       order_id: data2.data.order.id,
       callback_url: "http://localhost:8000/api/paymentverification",
       prefill: {
-        name: "Gaurav Kumar", // from login user
+        name: userName, // from login user
         email: "gaurav.kumar@example.com", // form login user
         contact: "9000090000", // from login used
       },
@@ -42,73 +59,7 @@ const Payment = () => {
       <h1 className="font-semibold text-2xl">Your Cart Details</h1>
       <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
         <div className="w-full">
-          <div className="flex items-center gap-5 border-b border-slate-300 pb-4">
-            <div className="w-4/12">
-              <img
-                className="w-full h-40 object-cover rounded-sm"
-                src={shoe}
-                alt="product_img"
-                loading="lazy"
-              />
-            </div>
-            <div className="w-8/12">
-              <div className="flex items-start justify-between">
-                <h2 className="font-semibold">Nike Dunk Low</h2>
-                <img
-                  className="w-5"
-                  src={remove}
-                  alt="remove_icon"
-                  loading="lazy"
-                />
-              </div>
-              <h2 className="font-semibold">₹ 3999</h2>
-              <p className="text-slate-600 italic">Mens shoes</p>
-
-              <div className="flex items-center gap-3 mt-5">
-                <button className="border border-black px-2 rounded-sm">
-                  +
-                </button>
-                {1}
-                <button className="border border-black px-2 rounded-sm">
-                  -
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-5 border-b border-slate-300 pb-4 mt-4">
-            <div className="w-4/12">
-              <img
-                className="w-full h-40 object-cover rounded-sm"
-                src={shoe1}
-                alt="product_img"
-                loading="lazy"
-              />
-            </div>
-            <div className="w-8/12">
-              <div className="flex items-start justify-between">
-                <h2 className="font-semibold">Nike Dunk Low</h2>
-                <img
-                  className="w-5"
-                  src={remove}
-                  alt="remove_icon"
-                  loading="lazy"
-                />
-              </div>
-              <h2 className="font-semibold">₹ 3999</h2>
-              <p className="text-slate-600 italic">Mens shoes</p>
-
-              <div className="flex items-center gap-3 mt-5">
-                <button className="border border-black px-2 rounded-sm">
-                  +
-                </button>
-                {1}
-                <button className="border border-black px-2 rounded-sm">
-                  -
-                </button>
-              </div>
-            </div>
-          </div>
+          <Order type={"payment"} />
         </div>
 
         <div className="w-full">
@@ -142,7 +93,20 @@ const Payment = () => {
           </button>
 
           <div className="mt-10">
-            <h2 className="font-semibold text-1xl">Address Details</h2>
+            <h2 className="font-semibold">Delivery Address</h2>
+            {address.map((item) => (
+              <div className="mt-5">
+                <p>
+                  {item.firstName} {item.lastName}
+                </p>
+                <p>{item.address}</p>
+                <p>{item.street}</p>
+                <p>
+                  {item.city}, {item.state}, {item.zip}, IN
+                </p>
+                <p>+91 {item.mobile}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

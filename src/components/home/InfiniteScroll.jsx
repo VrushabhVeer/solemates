@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import avatar from "../../assets/icons/avatar.png";
 import Image from "../common/Image";
 import { TESTIMONIALS } from "../../utils/constants";
 
@@ -39,7 +38,7 @@ const InfiniteScroll = () => {
             <div className="flex items-center gap-2 mt-2">
               <Image
                 className="w-8 h-8 object-cover rounded-full"
-                src={item.avatar === "" ? avatar : item.avatar}
+                src={item.avatar}
                 alt={item.userName}
                 loading="lazy"
               />

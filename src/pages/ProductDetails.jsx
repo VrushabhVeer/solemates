@@ -10,6 +10,7 @@ const ProductDetails = () => {
   const [data, setData] = useState({});
   const [size, setSize] = useState(null);
   const params = useParams();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const getProduct = async () => {
@@ -24,22 +25,35 @@ const ProductDetails = () => {
     getProduct();
   }, [params.product_id]);
 
-  const handleAction = async (actionFunc, payload) => {
+  const handleAction = async (actionFunc, payload, headers) => {
     try {
-      const response = await actionFunc(payload);
+      const response = await actionFunc(payload, { headers });
       enqueueSnackbar(response.data.message, { variant: "success" });
     } catch (error) {
+      const errorMessage = error.response && error.response.data && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+      enqueueSnackbar(errorMessage, { variant: "warning" });
       console.error(error);
     }
   };
 
   const handleCart = () => {
-    const payload = { ...data, size, quantity: 1, };
-    handleAction(addToCart, payload);
+    const userId = localStorage.getItem("userId");
+    const payload = { ...data, size, quantity: 1, userId };
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+
+    handleAction(addToCart, payload, headers);
   };
 
   const handleWishlist = () => {
-    handleAction(addToWishlist, data);
+    const userId = localStorage.getItem("userId");
+    const payload = { ...data, userId };
+
+    handleAction(addToWishlist, payload);
   };
 
   return (
@@ -47,7 +61,12 @@ const ProductDetails = () => {
       <div className="w-full flex flex-col md:flex-col lg:flex-row justify-between mb-1">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-1 w-full md:w-full lg:w-8/12">
           {PRODUCT_IMAGE.map((img, index) => (
-            <Image className={`w-full md:h-[80vh] object-cover`} key={index} src={data?.[img]} alt="productimg" />
+            <Image
+              className={`w-full md:h-[80vh] object-cover`}
+              key={index}
+              src={data?.[img]}
+              alt="productimg"
+            />
           ))}
         </div>
 

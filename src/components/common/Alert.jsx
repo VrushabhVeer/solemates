@@ -3,7 +3,7 @@ import React from "react";
 const Alert = ({ message }) => {
   return (
     <div
-      class="p-3 mb-4 text-sm text-yellow-900 rounded-lg bg-yellow-50"
+      className="p-3 mb-4 text-sm text-yellow-900 rounded-lg bg-yellow-50"
       role="alert"
     >
       <p>{message}</p>

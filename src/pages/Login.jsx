@@ -20,7 +20,12 @@ const Login = () => {
   const handleSubmit = async () => {
     try {
       const response = await loginApi(payload);
-      enqueueSnackbar(response.data.message, { variant: 'success' });
+      const { token, userId, userName } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("userName", userName);
+
+      enqueueSnackbar(response.data.message, { variant: "success" });
       setTimeout(() => {
         navigate("/");
       }, 1500);

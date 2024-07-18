@@ -1,70 +1,24 @@
-import React, { useEffect, useState } from "react";
-import remove from "../assets/icons/remove.png";
-import axios from "axios";
+import React, { useState } from "react";
 import Empty from "../components/common/Empty";
+import { Link } from "react-router-dom";
+import Order from "../components/common/Order";
 
 const Cart = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [cartItems, setCartItems] = useState({});
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/cart");
-      setData(response.data);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
+  const handleCartData = (data) => {
+    setCartItems(data);
   };
 
   return (
     <div className="w-[90%] md:w-[85%] mx-auto mt-10 mb-20">
-      {data.length === 0 ? (
-        <Empty />
+      <h1 className="font-semibold text-2xl">Your Cart Details</h1>
+      {cartItems.length === 0 ? (
+        <Empty type={"cart"} />
       ) : (
         <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
           <div className="w-full">
-            {data.map((item) => (
-              <div className="flex items-center gap-5 border-b border-slate-300 mt-4 mb-4">
-                <div className="w-4/12">
-                  <img
-                    className="w-full h-40 object-cover rounded-sm"
-                    src={item.img1}
-                    alt="product_img"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="w-8/12">
-                  <div className="flex items-start justify-between">
-                    <h2 className="font-semibold">{item.title}</h2>
-                    <img
-                      className="w-5"
-                      src={remove}
-                      alt="remove_icon"
-                      loading="lazy"
-                    />
-                  </div>
-                  <h2 className="font-semibold">₹ {item.offerPrice}</h2>
-                  <p className="text-slate-600 italic">{item.title2}</p>
-                  <p>Size {item.size}</p>
-                  <div className="flex items-center gap-3 mt-5">
-                    <button className="border border-black px-2 rounded-sm">
-                      +
-                    </button>
-                    {item.quantity}
-                    <button className="border border-black px-2 rounded-sm">
-                      -
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <Order onCartDataFetched={handleCartData} typ={"cart"} />
           </div>
 
           <div className="w-full">
@@ -89,11 +43,11 @@ const Cart = () => {
                 <p className="mt-2 font-medium">₹ 4100</p>
               </div>
             </div>
-
-            <button className="w-full mt-5 bg-black text-white py-2 rounded-md hover:bg-black focus:outline-none">
-              Proceed to checkout
-            </button>
-
+            <Link to="/checkout">
+              <button className="w-full mt-5 bg-black text-white py-2 rounded-md hover:bg-black focus:outline-none">
+                Proceed to checkout
+              </button>
+            </Link>
             <div className="mt-10">
               <h2 className="font-semibold text-1xl">Have Coupon?</h2>
               <div className="flex items-center mt-3">
