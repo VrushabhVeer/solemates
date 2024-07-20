@@ -3,6 +3,7 @@ import { addAddress, getCartItems } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import Image from "../components/common/Image";
+import CartSummary from "../components/common/CartSummary";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -20,7 +21,6 @@ const Checkout = () => {
     userId,
   });
   const [data, setData] = useState([]);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -188,27 +188,8 @@ const Checkout = () => {
           </div>
 
           <div className="w-full">
-            <h2 className="font-semibold text-1xl">Order Summary</h2>
 
-            <div className="mt-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p>Subtotal</p>
-                  <p className="mt-3">Tax</p>
-                  <p className="mt-3">Shipping</p>
-                </div>
-                <div>
-                  <p>₹ 3999</p>
-                  <p className="mt-3">₹ 10</p>
-                  <p className="mt-3">₹ 89</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mt-4 border-t border-gray-300">
-                <p className="mt-2 font-medium">Total</p>
-                <p className="mt-2 font-medium">₹ 4100</p>
-              </div>
-            </div>
+            <CartSummary cartItems={data} />
 
             <div className="mt-10">
               <h2 className="font-semibold text-1xl">Order Details</h2>

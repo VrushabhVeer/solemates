@@ -1,89 +1,105 @@
 import React, { useEffect, useState } from "react";
-import logo from "../assets/icons/google-pay.png";
-import axios from "axios";
+import logo from "../assets/icons/logo.png";
 import Order from "../components/common/Order";
-import { getAddress } from "../utils/api";
+import { CALLBACK_URL, getAddress, getCartItems, getPayment, makePaymant } from "../utils/api";
+import CartSummary from "../components/common/CartSummary";
 
 const Payment = () => {
   const [address, setAddress] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const userName = localStorage.getItem("userName");
+  const userEmail = localStorage.getItem("userEmail");
   const userId = localStorage.getItem("userId");
+  const mobileNumber = address?.[0]?.mobile;
 
   useEffect(() => {
-    const fetchAddress = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getAddress(userId);
-        setAddress(response.data);
-        console.log(response.data);
+        const [addressResponse, cartResponse] = await Promise.all([
+          getAddress(userId),
+          getCartItems(userId),
+        ]);
+        setAddress(addressResponse.data);
+        setCartItems(cartResponse.data);
+        localStorage.setItem("isAddressAavilable", addressResponse.data.length ? "yes" : "no");
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchAddress();
+    fetchData();
   }, [userId]);
 
-  const handleCheckout = async (amount) => {
-    let data1 = await axios.get("http://localhost:8000/api/getKey");
-    let data2 = await axios.post("http://localhost:8000/api/checkout", {
-      amount,
-    });
-
-    const options = {
-      key: data1.data.key,
-      amount: data2.data.order.amount,
-      currency: "INR",
-      name: "Solemates Footwears",
-      description: "Online footware selling company",
-      image: logo,
-      order_id: data2.data.order.id,
-      callback_url: "http://localhost:8000/api/paymentverification",
-      prefill: {
-        name: userName, // from login user
-        email: "gaurav.kumar@example.com", // form login user
-        contact: "9000090000", // from login used
-      },
-      notes: {
-        address: "Razorpay Corporate Office",
-      },
-      theme: {
-        color: "#000000",
-      },
-    };
-    var razor = new window.Razorpay(options);
-    razor.open();
+  const handlePaymentVerification = async (response) => {
+    try {
+      const res = await fetch("http://localhost:8000/api/payment/paymentverification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = data.redirectUrl;
+      } else {
+        alert("Payment verification failed");
+      }
+    } catch (error) {
+      console.error("Error in payment verification:", error);
+    }
   };
+
+  // Handle checkout with dynamic amount
+  const handleCheckout = async () => {
+    try {
+      const { data: paymentData } = await getPayment();
+      const { data: paymentOrder } = await makePaymant(cartItems.reduce((total, item) => total + item.offerPrice * item.quantity, 0));
+
+      const options = {
+        key: paymentData.key,
+        amount: paymentOrder.order.amount,
+        currency: "INR",
+        name: "Solemates Footwears",
+        description: "Online footwear selling company",
+        image: logo,
+        order_id: paymentOrder.order.id,
+        callback_url: CALLBACK_URL,
+        prefill: {
+          name: userName,
+          email: userEmail,
+          contact: mobileNumber,
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#000000",
+        },
+        handler: handlePaymentVerification,
+      };
+
+      new window.Razorpay(options).open();
+    } catch (error) {
+      console.error("Error in payment process:", error);
+    }
+  };
+
 
   return (
     <div className="w-[90%] md:w-[85%] mx-auto mt-10 mb-20">
       <h1 className="font-semibold text-2xl">Your Cart Details</h1>
       <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
         <div className="w-full">
-          <Order type={"payment"} />
+          <Order type={"payment"} cartItems={cartItems} />
         </div>
 
         <div className="w-full">
-          <h2 className="font-semibold text-1xl">Order Summary</h2>
-
-          <div className="mt-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p>Subtotal</p>
-                <p className="mt-3">Tax</p>
-                <p className="mt-3">Shipping</p>
-              </div>
-              <div>
-                <p>₹ 3999</p>
-                <p className="mt-3">₹ 10</p>
-                <p className="mt-3">₹ 89</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-4 border-t border-slate-300">
-              <p className="mt-2 font-medium">Total</p>
-              <p className="mt-2 font-medium">₹ 4100</p>
-            </div>
-          </div>
+          <CartSummary cartItems={cartItems} />
 
           <button
             onClick={() => handleCheckout(7998)}
@@ -95,7 +111,7 @@ const Payment = () => {
           <div className="mt-10">
             <h2 className="font-semibold">Delivery Address</h2>
             {address.map((item) => (
-              <div className="mt-5">
+              <div className="mt-5" key={item._id}>
                 <p>
                   {item.firstName} {item.lastName}
                 </p>

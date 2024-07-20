@@ -1,36 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { deleteCartItem, getCartItems } from "../../utils/api";
+import React, { useState } from "react";
+import { deleteCartItem } from "../../utils/api";
 import { Link } from "react-router-dom";
 import remove from "../../assets/icons/remove.png";
 import Image from "./Image";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import Modal from "./Modal";
 
-const Order = ({ onCartDataFetched, type }) => {
-  const [data, setData] = useState([]);
+const Order = ({ cartItems, setCartItems, type }) => {
   const [showModal, setShowModal] = useState(false);
   const [itemIdToDelete, setItemIdToDelete] = useState(null);
-  const userId = localStorage.getItem("userId");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getCartItems(userId);
-        setData(response.data);
-        onCartDataFetched(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, [userId, onCartDataFetched]);
 
   const handleDelete = async () => {
     try {
       const response = await deleteCartItem(itemIdToDelete);
       enqueueSnackbar(response.data.message, { variant: "success" });
-      setData((prevData) => prevData.filter((item) => item._id !== itemIdToDelete));
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item._id !== itemIdToDelete)
+      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -49,9 +35,19 @@ const Order = ({ onCartDataFetched, type }) => {
     setItemIdToDelete(null);
   };
 
+  const handleQuantityChange = (id, delta) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item._id === id
+          ? { ...item, quantity: Math.max(1, Math.min(3, item.quantity + delta)) }
+          : item
+      )
+    );
+  };
+
   return (
     <div>
-      {data.map((item) => (
+      {cartItems.map((item) => (
         <div
           className="flex items-center gap-5 border-b border-slate-300 mt-4 mb-4"
           key={item.id}
@@ -90,11 +86,19 @@ const Order = ({ onCartDataFetched, type }) => {
               ""
             ) : (
               <div className="flex items-center gap-3 mt-5">
-                <button className="border border-black px-2 rounded-sm">
+                <button
+                  className="border border-black px-2 rounded-sm"
+                  onClick={() => handleQuantityChange(item._id, 1)}
+                  disabled={item.quantity >= 3}
+                >
                   +
                 </button>
                 {item.quantity}
-                <button className="border border-black px-2 rounded-sm">
+                <button
+                  className="border border-black px-2 rounded-sm"
+                  onClick={() => handleQuantityChange(item._id, -1)}
+                  disabled={item.quantity <= 1}
+                >
                   -
                 </button>
               </div>
@@ -103,10 +107,8 @@ const Order = ({ onCartDataFetched, type }) => {
         </div>
       ))}
 
-
       {showModal && (
-        <Modal closeModal={closeModal}
-        handleDelete={handleDelete} />
+        <Modal closeModal={closeModal} handleDelete={handleDelete} />
       )}
 
       <SnackbarProvider />

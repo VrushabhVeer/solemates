@@ -38,9 +38,10 @@ const ProductDetails = () => {
     }
   };
 
-  const handleCart = () => {
+  const handleCart = (itemId) => {
     const userId = localStorage.getItem("userId");
-    const payload = { ...data, size, quantity: 1, userId };
+    const payload = { ...data, size, quantity: 1, userId, itemId };
+
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -49,9 +50,9 @@ const ProductDetails = () => {
     handleAction(addToCart, payload, headers);
   };
 
-  const handleWishlist = () => {
+  const handleWishlist = (itemId) => {
     const userId = localStorage.getItem("userId");
-    const payload = { ...data, userId };
+    const payload = { ...data, userId, itemId };
 
     handleAction(addToWishlist, payload);
   };
@@ -119,7 +120,7 @@ const ProductDetails = () => {
 
           <div className="mt-10">
             <button
-              onClick={handleCart}
+              onClick={() => handleCart(data._id)}
               disabled={!size}
               className="w-full bg-black text-white py-3 rounded-md hover:bg-black focus:outline-none"
             >
@@ -127,7 +128,7 @@ const ProductDetails = () => {
             </button>
             {!size && <Alert message={"Please select size!"} />}
             <button
-              onClick={handleWishlist}
+              onClick={() => handleWishlist(data._id)}
               className="w-full flex items-center justify-center border border-black py-2 rounded-md mt-1"
             >
               Add to Wishlist
