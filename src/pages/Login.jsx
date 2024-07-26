@@ -3,7 +3,7 @@ import view from "../assets/icons/view.png";
 import hide from "../assets/icons/hide.png";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleAuth from "../components/common/GoogleAuth";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import { loginApi } from "../utils/api";
 import Image from "../components/common/Image";
 
@@ -47,7 +47,6 @@ const Login = () => {
 
   return (
     <div className="h-[90vh] flex justify-center items-center bg-gray-50">
-      <SnackbarProvider />
       <div className="bg-white p-8 rounded-lg w-96">
         <div>
           <h2 className="text-2xl font-semibold">Login</h2>

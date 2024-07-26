@@ -3,10 +3,10 @@ import { deleteCartItem } from "../../utils/api";
 import { Link } from "react-router-dom";
 import remove from "../../assets/icons/remove.png";
 import Image from "./Image";
-import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import Modal from "./Modal";
 
-const Order = ({ cartItems, setCartItems, type }) => {
+const CartItems = ({ cartItems, setCartItems, type }) => {
   const [showModal, setShowModal] = useState(false);
   const [itemIdToDelete, setItemIdToDelete] = useState(null);
 
@@ -108,12 +108,10 @@ const Order = ({ cartItems, setCartItems, type }) => {
       ))}
 
       {showModal && (
-        <Modal closeModal={closeModal} handleDelete={handleDelete} />
+        <Modal type={"cart"} closeModal={closeModal} handleDelete={handleDelete} />
       )}
-
-      <SnackbarProvider />
     </div>
   );
 };
 
-export default Order;
+export default CartItems;

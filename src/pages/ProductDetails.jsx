@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Alert from "../components/common/Alert";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import { addToCart, addToWishlist, getProductById } from "../utils/api";
 import Image from "../components/common/Image";
 import { PRODUCT_IMAGE } from "../utils/constants";
@@ -154,7 +154,6 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      <SnackbarProvider />
     </>
   );
 };

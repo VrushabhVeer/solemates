@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 import logo from "../assets/icons/logo.png";
-import Order from "../components/common/Order";
-import { CALLBACK_URL, getAddress, getCartItems, getPayment, makePaymant } from "../utils/api";
+import { CALLBACK_URL, getCartItems, getPayment, makePaymant } from "../utils/api";
 import CartSummary from "../components/common/CartSummary";
+import Address from "../components/common/Address";
+import CartItems from "../components/common/CartItems";
 
 const Payment = () => {
-  const [address, setAddress] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const userName = localStorage.getItem("userName");
   const userEmail = localStorage.getItem("userEmail");
   const userId = localStorage.getItem("userId");
-  const mobileNumber = address?.[0]?.mobile;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [addressResponse, cartResponse] = await Promise.all([
-          getAddress(userId),
-          getCartItems(userId),
-        ]);
-        setAddress(addressResponse.data);
-        setCartItems(cartResponse.data);
-        localStorage.setItem("isAddressAavilable", addressResponse.data.length ? "yes" : "no");
+        const response = await getCartItems(userId)
+        setCartItems(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -72,7 +66,7 @@ const Payment = () => {
         prefill: {
           name: userName,
           email: userEmail,
-          contact: mobileNumber,
+          contact: 9088921497,
         },
         notes: {
           address: "Razorpay Corporate Office",
@@ -95,7 +89,7 @@ const Payment = () => {
       <h1 className="font-semibold text-2xl">Your Cart Details</h1>
       <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
         <div className="w-full">
-          <Order type={"payment"} cartItems={cartItems} />
+          <CartItems type={"payment"} cartItems={cartItems} />
         </div>
 
         <div className="w-full">
@@ -108,22 +102,7 @@ const Payment = () => {
             Complete Payment
           </button>
 
-          <div className="mt-10">
-            <h2 className="font-semibold">Delivery Address</h2>
-            {address.map((item) => (
-              <div className="mt-5" key={item._id}>
-                <p>
-                  {item.firstName} {item.lastName}
-                </p>
-                <p>{item.address}</p>
-                <p>{item.street}</p>
-                <p>
-                  {item.city}, {item.state}, {item.zip}, IN
-                </p>
-                <p>+91 {item.mobile}</p>
-              </div>
-            ))}
-          </div>
+          <Address />
         </div>
       </div>
     </div>

@@ -1,31 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "../components/common/Image";
 import user from "../assets/icons/avatar.png";
-import { getAddress } from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import Address from "../components/common/Address";
 
 const Profile = () => {
-  const [address, setAddress] = useState([]);
   const username = localStorage.getItem("userName");
-  const userId = localStorage.getItem("userId");
   const userEmail = localStorage.getItem("userEmail");
   const createdAt = localStorage.getItem("createdAt");
   const [activeView, setActiveView] = useState("myOrders");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchAddress = async () => {
-      try {
-        const response = await getAddress(userId);
-        setAddress(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchAddress();
-  }, [userId]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -54,24 +38,7 @@ const Profile = () => {
       case "myOrders":
         return <p>Your orders will be displayed here.</p>;
       case "address":
-        return (
-          <div>
-            <h2 className="font-semibold">Delivery Address</h2>
-            {address.map((item) => (
-              <div className="mt-5">
-                <p>
-                  {item.firstName} {item.lastName}
-                </p>
-                <p>{item.address}</p>
-                <p>{item.street}</p>
-                <p>
-                  {item.city}, {item.state}, {item.zip}, IN
-                </p>
-                <p>+91 {item.mobile}</p>
-              </div>
-            ))}
-          </div>
-        );
+        return <Address />;
       default:
         return;
     }

@@ -5,7 +5,7 @@ import Empty from "../components/common/Empty";
 import { Link } from "react-router-dom";
 import Image from "../components/common/Image";
 import deleteIcon from "../assets/icons/delete.png";
-import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import Modal from "../components/common/Modal";
 
 const Wishlist = () => {
@@ -100,10 +100,9 @@ const Wishlist = () => {
       )}
 
       {showModal && (
-        <Modal closeModal={closeModal} handleDelete={handleDelete} />
+        <Modal type={"wishlist"} closeModal={closeModal} handleDelete={handleDelete} />
       )}
 
-      <SnackbarProvider />
     </div>
   );
 };

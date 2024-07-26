@@ -26,7 +26,7 @@ export const addAddress = (data) => api.post("/address/create", data);
 export const getAddress = (userId) => api.get(`/address/${userId}`);
 export const deleteAddress = (itemId) =>
   api.delete(`/address/delete/${itemId}`);
-export const updateAddress = (itemId) => api.put(`/address/update/${itemId}`);
+export const updateAddress = (itemId, payload) => api.put(`/address/update/${itemId}`, payload);
 
 export const makePaymant = (amount) =>
   api.post("/payment/checkout", { amount });

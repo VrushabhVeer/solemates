@@ -1,4 +1,4 @@
-import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import React, { useState } from "react";
 
 const Newslater = () => {
@@ -29,7 +29,6 @@ const Newslater = () => {
 
   return (
     <div className="w-full bg-black text-white py-10 mt-20">
-      <SnackbarProvider />
       <div className="w-[90%] md:w-[85%] mx-auto flex flex-col md:flex-row lg:flex-row items-center justify-between gap-5 md:gap-20 lg:gap-48">
         <div className="w-full">
           <h2 className="text-2xl md:text-4xl text-center md:text-left font-bold text-white">

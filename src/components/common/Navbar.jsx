@@ -8,6 +8,7 @@ import Image from "./Image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const cartLength = localStorage.getItem("cartLength");
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -84,9 +85,14 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <Link to="/cart">
+            <Link className="relative" to="/cart">
               <span className="hidden md:flex">
                 <Image className="w-5" src={cart} alt="cart" loading="lazy" />
+                {cartLength > 0 && (
+                  <div className="absolute top-[-10px] right-[-10px] bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartLength}
+                  </div>
+                )}
               </span>
             </Link>
 

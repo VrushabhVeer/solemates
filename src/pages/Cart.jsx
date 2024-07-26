@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Empty from "../components/common/Empty";
 import { Link } from "react-router-dom";
-import Order from "../components/common/Order";
 import CartSummary from "../components/common/CartSummary";
 import { getCartItems } from "../utils/api";
+import CartItems from "../components/common/CartItems";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const userId = localStorage.getItem("userId");
+  localStorage.setItem("cartLength", cartItems.length);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +31,7 @@ const Cart = () => {
       ) : (
         <div className="flex flex-col md:flex-row lg:flex-row justify-between mt-8 gap-10 md:gap-20">
           <div className="w-full">
-            <Order cartItems={cartItems} setCartItems={setCartItems} typ={"cart"} />
+            <CartItems cartItems={cartItems} setCartItems={setCartItems} typ={"cart"} />
           </div>
           <div className="w-full">
             <CartSummary cartItems={cartItems} />

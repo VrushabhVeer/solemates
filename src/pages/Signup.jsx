@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import GoogleAuth from "../components/common/GoogleAuth";
 import view from "../assets/icons/view.png";
 import hide from "../assets/icons/hide.png";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import { signupApi } from "../utils/api";
 import Image from "../components/common/Image";
 
@@ -43,7 +43,6 @@ const Signup = () => {
 
   return (
     <>
-      <SnackbarProvider />
       <div className="h-[90vh] flex justify-center items-center bg-gray-50">
         <div className="bg-white p-8 rounded-lg w-96">
           <div>

@@ -26,6 +26,7 @@ import applepay from "../assets/icons/apple-pay.png";
 import gpay from "../assets/icons/google-pay.png";
 
 export const BASE_URL = "http://localhost:8000/api";
+// export const BASE_URL = "https://solemates-server.vercel.app/api/";
 export const SHOE_SIZES = ["6", "7", "8", "9", "10", "11", "12"];
 export const PRODUCT_IMAGE = ["img1", "img2", "img3", "img4"];
 export const BRAND_LOGOS = [
